@@ -4,8 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TodoApp.Common.Helpers;
 using TodoApp.Models;
 using TodoApp.Models.Employees;
+using TodoApp.Models.User;
+using TodoApp.Repositories.Base;
 using TodoApp.Services;
 namespace TodoApp.Controllers
 {
@@ -44,7 +47,16 @@ namespace TodoApp.Controllers
         [HttpPost]
         public async Task<IActionResult> AddEmployee([FromBody] EmployeeManageModel employeeManageModel)
         {
-            var responseModel = await _employeeService.AddEmployee(employeeManageModel);
+            //    var mes = SMSHelper.GenerateVerifyNumber();
+            //    var phone = "+84974076085";
+            //    SMSHelper.SendMessage(mes, phone);
+            var requestId = SMSHelper.MakeRequest();
+            //  var responseModel = await _employeeService.AddEmployee(employeeManageModel);
+            var responseModel = new ResponseModel()
+            {
+                StatusCode = System.Net.HttpStatusCode.OK,
+                Data = requestId
+            };
             if (responseModel.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 return Ok(responseModel.Data);
@@ -54,6 +66,29 @@ namespace TodoApp.Controllers
                 return BadRequest(new { Message = responseModel.Message });
             }
         }
+
+        [HttpPost("verify")]
+        public async Task<IActionResult> Verify([FromBody] VerifyModel verifyModel)
+        {
+            // var responseModel = await _employeeService.AddEmployee(employeeManageModel);
+            var err = SMSHelper.CheckRequest(verifyModel);
+
+            var responseModel = new ResponseModel()
+            {
+                StatusCode = System.Net.HttpStatusCode.OK,
+                Data = err
+            };
+
+            if (responseModel.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                return Ok(responseModel.Data);
+            }
+            else
+            {
+                return BadRequest(new { Message = responseModel.Message });
+            }
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateEmployee(Guid id, [FromBody] EmployeeManageModel employeeManageModel)
         {

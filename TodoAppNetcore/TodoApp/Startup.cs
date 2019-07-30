@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
+using TodoApp.Common;
 using TodoApp.Entities;
 using TodoApp.Models;
 using TodoApp.Models.Employees;
@@ -42,7 +43,8 @@ namespace TodoApp
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-                  builder => builder.AllowAnyOrigin()
+                  builder => builder
+                  .SetIsOriginAllowed((host) => true)
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials());
@@ -60,6 +62,7 @@ namespace TodoApp
             //Register Service
             services.AddScoped<IEmployeeService, EmployeeService>();
 
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -80,6 +83,11 @@ namespace TodoApp
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Orient API V1");
+            });
+
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<ChatHub>("/chat");
             });
 
             app.UseHttpsRedirection();

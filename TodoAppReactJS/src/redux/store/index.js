@@ -11,5 +11,3 @@ const sagaMiddleware = createSagaMiddleware();
 
 export const store = createStore(reducers, composeEnhancers(applyMiddleware(sagaMiddleware)));
 sagaMiddleware.run(sagas)
-
-console.log(store.getState());

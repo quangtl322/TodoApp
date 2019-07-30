@@ -15,11 +15,11 @@ const getEmployee = (params) => {
         }
     })
         .then(res => {
-            console.log(res)
+            //  console.log(res)
             return res.data;
         })
         .catch(e => {
-            console.log(e)
+            // console.log(e)
             throw e;
         })
 }
@@ -30,7 +30,7 @@ function* getEmployeeSaga(action) {
         console.log(payload)
         yield put(actions.getEmployeeSuccess(payload))
     } catch (error) {
-        console.log(error)
+        // console.log(error)
         yield put(actions.getEmployeeFail(error))
     }
 }

@@ -14,7 +14,7 @@ export const getEmployeeSuccess = (payload) => {
 }
 export const getEmployeeFail = (error) => {
     return {
-        type: actionTypes.GET_EMPLOYEES_START,
+        type: actionTypes.GET_EMPLOYEES_FAIL,
         error
     }
 }

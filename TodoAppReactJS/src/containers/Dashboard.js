@@ -15,7 +15,9 @@ class Dashboard extends Component {
         super(props)
         this.state = {
             username: "",
-            password: ""
+            password: "",
+            code: "",
+            requestId: ""
         }
     }
 
@@ -35,13 +37,42 @@ class Dashboard extends Component {
             }
         }).then(data => {
             console.log(data)
-        })
+            this.setState({
+                requestId: data.data
+            })
+        }).catch(err => {
+            console.log(err.response);
+        });
         this.onGetData();
         this.setState({
             username: '',
             password: ''
         })
     }
+
+    onVerify = async (event) => {
+        event.preventDefault();
+        let { code, requestId } = this.state;
+        let data = {
+            code,
+            requestId
+        }
+        console.log(data);
+        await axios({
+            method: 'post',
+            url: 'https://localhost:44373/api/employee/verify',
+            data: data,
+            headers: {
+                accept: "application/json",
+                contentType: "application/json",
+            }
+        }).then(data => {
+            console.log(data)
+        }).catch(err => {
+            console.log(err.response);
+        });
+    }
+
     onChange = (event) => {
         var target = event.target;
         var name = target.name;
@@ -113,6 +144,17 @@ class Dashboard extends Component {
 
                 </Form>
 
+                <Form onSubmit={this.onVerify}>
+                    <FormGroup>
+                        <Label for="examplePassword">Code</Label>
+                        <Input type="text"
+                            name="code"
+                            onChange={this.onChange}
+                        />
+                    </FormGroup>
+                    <Button color="primary" type="submit">Verify</Button>
+
+                </Form>
                 {/* <Input name="item" innerRef={input => (this.nameRef = input)} /> */}
             </div>
         )
